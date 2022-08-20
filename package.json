@@ -1,0 +1,28 @@
+{
+  "name": "leadsapp",
+  "version": "1.0.0",
+  "description": "App for WebAcchi Leads",
+  "main": "main.js",
+  "scripts": {
+    "build": "babel src/ -d dist && cp .env dist/",
+    "use": "babel-node src/main.js",
+    "start": "npm run build && npm run use",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Felipe Mancilla",
+  "license": "MIT",
+  "dependencies": {
+    "babel-plugin-inline-dotenv": "^1.7.0",
+    "dotenv": "^16.0.1",
+    "mysql2": "^2.3.3",
+    "node-fetch": "^3.2.10"
+  },
+  "keywords": [],
+  "type": "module",
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.10",
+    "@babel/node": "^7.18.10",
+    "@babel/preset-env": "^7.18.10"
+  }
+}

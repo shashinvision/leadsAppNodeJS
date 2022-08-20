@@ -1,0 +1,14 @@
+{
+
+  "plugins": ["inline-dotenv"],
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ]
+  ]
+}
