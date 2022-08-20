@@ -19,7 +19,7 @@ npm run build
 ```
 cp .env.example .env
 ```
-![img con el access token](./img/AMOForm.png)
+![img con el access token](./img/AMOForm1.png)
 
 ### Lo anterior es para crear crear las variables de entorno necesarias, dentro de esta se encuentra el ACCESS_TOKEN a configurar
 
