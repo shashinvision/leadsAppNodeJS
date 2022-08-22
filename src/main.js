@@ -73,7 +73,7 @@ const totalProceso = (leidos, success, errors, data, response) => {
         response["validation-errors"] != undefined &&
         response["validation-errors"][0].errors.length > 0
     ) {
-        dataLog += "Error: \n";
+        dataLog += "*** Error *** : \n";
         dataLog +=
             JSON.stringify(response["validation-errors"][0].errors) + "\n";
     } else {
@@ -102,7 +102,7 @@ const fileLog = (data) => {
     let seconds = String(today.getSeconds());
 
     today =
-        yyyy + "-" + mm + "-" + dd + "" + hours + "" + minutes + "" + seconds;
+        yyyy + "-" + mm + "-" + dd + "-" + hours + "" + minutes + "" + seconds;
     console.log("Guardando archivo de log...");
     let fileNameLog = today + "-log.txt";
     fs.writeFile(fileNameLog, data, (err) => {
