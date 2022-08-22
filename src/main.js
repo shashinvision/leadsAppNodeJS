@@ -2,8 +2,6 @@ import fetch from "node-fetch";
 import model from "./models/leads.js";
 import insertLead from "./controllers/Leads.js";
 import fs from "fs";
-import { memoryUsage } from "process";
-import { resourceLimits } from "worker_threads";
 
 const netInfo = async () => {
     await fetch("https://ifconfig.me/all.json")
