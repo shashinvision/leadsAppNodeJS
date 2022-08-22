@@ -120,7 +120,7 @@ process.stdin.on("data", async (data) => {
         end();
         return;
     }
-    console.log("ERROR");
+    console.log("ERROR al procesar los leads");
     end();
 });
 
