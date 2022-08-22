@@ -104,7 +104,7 @@ const fileLog = (data) => {
     today =
         yyyy + "-" + mm + "-" + dd + "-" + hours + "" + minutes + "" + seconds;
     console.log("Guardando archivo de log...");
-    let fileNameLog = today + "-log.txt";
+    let fileNameLog = "logs/" + today + "-log.txt";
     fs.writeFile(fileNameLog, data, (err) => {
         if (err) throw err;
         console.log("Log Guardado nombre del archivo: \n" + fileNameLog);
