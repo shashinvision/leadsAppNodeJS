@@ -3,7 +3,7 @@ import model from "./models/leads.js";
 import insertLead from "./controllers/Leads.js";
 import fs from "fs";
 import { memoryUsage } from "process";
-import {resourceLimits} from "worker_threads";
+import { resourceLimits } from "worker_threads";
 
 const netInfo = async () => {
     await fetch("https://ifconfig.me/all.json")
@@ -21,7 +21,10 @@ const setLeads = (leads) => {
             await new Promise((resolve) => setTimeout(resolve, index++ * 1000));
             setTimeout(async () => {
                 let resultInsert = await insertLead(element.json_request);
-                if (resultInsert["validation-errors"] != undefined || resultInsert.status != undefined) {
+                if (
+                    resultInsert["validation-errors"] != undefined ||
+                    resultInsert.status != undefined
+                ) {
                     totalProceso(
                         leads.length,
                         0,
@@ -75,6 +78,8 @@ const totalProceso = (leidos, success, errors, data, response) => {
         dataLog += "Error: \n";
         dataLog +=
             JSON.stringify(response["validation-errors"][0].errors) + "\n";
+    } else {
+        dataLog += "*** Success ***\n";
     }
 
     dataLog += "***** RESULTADOS ******\n";
@@ -105,7 +110,7 @@ const fileLog = (data) => {
     fs.writeFile(fileNameLog, data, (err) => {
         if (err) throw err;
         console.log("Log Guardado nombre del archivo: \n" + fileNameLog);
-        console.log("Para salir preciona ENTER.")
+        console.log("Para salir preciona ENTER.");
     });
 };
 
