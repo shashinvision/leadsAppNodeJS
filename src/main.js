@@ -105,7 +105,7 @@ const fileLog = (data) => {
     fs.writeFile(fileNameLog, data, (err) => {
         if (err) throw err;
         console.log("Log Guardado nombre del archivo: \n" + fileNameLog);
-        console.log("Para salir preciona cualquier tecla.")
+        console.log("Para salir preciona ENTER.")
     });
 };
 
