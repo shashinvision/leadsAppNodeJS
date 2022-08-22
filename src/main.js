@@ -3,6 +3,7 @@ import model from "./models/leads.js";
 import insertLead from "./controllers/Leads.js";
 import fs from "fs";
 import { memoryUsage } from "process";
+import {resourceLimits} from "worker_threads";
 
 const netInfo = async () => {
     await fetch("https://ifconfig.me/all.json")
@@ -20,7 +21,7 @@ const setLeads = (leads) => {
             await new Promise((resolve) => setTimeout(resolve, index++ * 1000));
             setTimeout(async () => {
                 let resultInsert = await insertLead(element.json_request);
-                if (resultInsert["validation-errors"] != undefined) {
+                if (resultInsert["validation-errors"] != undefined || resultInsert.status != undefined) {
                     totalProceso(
                         leads.length,
                         0,
@@ -50,7 +51,6 @@ console.log("=== BIENVENIDO ===");
 await netInfo();
 console.log("Indique una fecha desde que se veran los leads");
 console.log("FORMATO: AAAA-MM-DD: ");
-console.log("Cuando Finalice presione cualquier tecla");
 
 let successCount = 0;
 let errorCount = 0;
@@ -105,6 +105,7 @@ const fileLog = (data) => {
     fs.writeFile(fileNameLog, data, (err) => {
         if (err) throw err;
         console.log("Log Guardado nombre del archivo: \n" + fileNameLog);
+        console.log("Para salir preciona cualquier tecla.")
     });
 };
 
