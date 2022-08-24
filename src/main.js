@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import model from "./models/leads.js";
 import insertLead from "./controllers/Leads.js";
 import fs from "fs";
+import colors from "colors";
 
 const netInfo = async () => {
     await fetch("https://ifconfig.me/all.json")
@@ -67,17 +68,17 @@ const totalProceso = (leidos, success, errors, data, response) => {
     dataLog += "=== Lead Leido desde wordpress ===\n";
     dataLog += data;
     dataLog += "\n";
-    dataLog += "Response desde AMO CRM:" + JSON.stringify(response) + "\n";
+    dataLog += "Response desde AMO CRM:" + JSON.stringify(response) + "\n".bgCyan;
     dataLog += "===================================\n";
     if (
         response["validation-errors"] != undefined &&
         response["validation-errors"][0].errors.length > 0
     ) {
-        dataLog += "*** Error *** : \n";
+        dataLog += "*** Error *** : \n".bgRed;
         dataLog +=
-            JSON.stringify(response["validation-errors"][0].errors) + "\n";
+            JSON.stringify(response["validation-errors"][0].errors) + "\n".bgRed;
     } else {
-        dataLog += "*** Success ***\n";
+        dataLog += "*** Success ***\n".bgGreen;
     }
 
     dataLog += "***** RESULTADOS ******\n";
