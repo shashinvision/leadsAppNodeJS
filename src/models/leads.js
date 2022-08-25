@@ -20,7 +20,7 @@ const model = {
             FROM wp_bpamo_log_form
             WHERE created_at >  ?
                 AND status_code <> '200'
-                AND LOWER(json_request) like  LOWER('%"value": "${valueJson}"%')
+                AND LOWER(json_request) like  LOWER('%"value": "${valueJson.trim()}"%')
             ORDER BY id DESC;
             `;
         }
