@@ -2,12 +2,31 @@ import query from "../services/db.js";
 import { emptyOrRows } from "../helper.js";
 
 const model = {
-    getLeads: async (fromDate) => {
-        const result = await query(
-            "SELECT json_request FROM wp_bpamo_log_form WHERE created_at >  ? AND status_code <> '200' ORDER BY id DESC;",
-            [fromDate + " 00:00:00"]
-        );
-        const data = emptyOrRows(result);
+    getLeads: async (fromDate, hours = "", valueJson = "") => {
+        const dateTimeQuery =
+            fromDate + " " + (hours == "" ? "00:00:00" : hours);
+
+        let queryLeads = `
+            SELECT json_request
+            FROM wp_bpamo_log_form
+            WHERE created_at >  ?
+                AND status_code <> '200'
+            ORDER BY id DESC;
+            `;
+
+        if (valueJson != "") {
+            queryLeads = `
+            SELECT json_request
+            FROM wp_bpamo_log_form
+            WHERE created_at >  ?
+                AND status_code <> '200'
+                AND LOWER(json_request) like  LOWER('%"value": "${valueJson}"%')
+            ORDER BY id DESC;
+            `;
+        }
+        const result = await query(queryLeads, [dateTimeQuery.trim()]);
+
+        const data = await emptyOrRows(result);
         // console.log("======Get Leads ====");
         // console.log(data);
         // console.log("Total: ", data.length);

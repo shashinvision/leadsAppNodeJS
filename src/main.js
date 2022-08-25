@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import model from "./models/leads.js";
 import insertLead from "./controllers/Leads.js";
 import fs from "fs";
+import readline from "readline";
 import colors from "colors";
 
 const netInfo = async () => {
@@ -10,8 +11,8 @@ const netInfo = async () => {
         .then((text) => console.log("su IP: " + text.ip_addr));
 };
 
-const getAllLeads = async (date) => {
-    const data = await model.getLeads(date);
+const getAllLeads = async (date, time = "", valueJson = "") => {
+    const data = await model.getLeads(date, time, valueJson);
     return data;
 };
 const setLeads = (leads) => {
@@ -49,11 +50,6 @@ const setLeads = (leads) => {
     }
 };
 
-console.log("=== BIENVENIDO ===");
-await netInfo();
-console.log("Indique una fecha desde que se veran los leads");
-console.log("FORMATO: AAAA-MM-DD: ");
-
 let successCount = 0;
 let errorCount = 0;
 let dataLog = "";
@@ -68,17 +64,18 @@ const totalProceso = (leidos, success, errors, data, response) => {
     dataLog += "=== Lead Leido desde wordpress ===\n";
     dataLog += data;
     dataLog += "\n";
-    dataLog += "Response desde AMO CRM:" + JSON.stringify(response) + "\n".bgCyan;
+    dataLog += "Response desde AMO CRM:" + JSON.stringify(response) + "\n";
     dataLog += "===================================\n";
     if (
         response["validation-errors"] != undefined &&
         response["validation-errors"][0].errors.length > 0
     ) {
-        dataLog += "*** Error *** : \n".bgRed;
+        dataLog += "*** Error *** : \n";
         dataLog +=
-            JSON.stringify(response["validation-errors"][0].errors) + "\n".bgRed;
+            JSON.stringify(response["validation-errors"][0].errors) +
+            "\n".bgRed;
     } else {
-        dataLog += "*** Success ***\n".bgGreen;
+        dataLog += "*** Success ***\n";
     }
 
     dataLog += "***** RESULTADOS ******\n";
@@ -113,18 +110,63 @@ const fileLog = (data) => {
     });
 };
 
-process.stdin.on("data", async (data) => {
-    const leads = await getAllLeads(data.toString());
-    if (setLeads(leads)) {
-        end();
-        return;
-    }
-    console.log("ERROR al procesar los leads");
-    end();
+// para leer lineas de los inputs
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
 });
 
-const end = () => {
-    process.stdin.on("data", async (data) => {
-        process.exit();
-    });
+console.log("=== BIENVENIDO ===");
+await netInfo();
+let dateAsk = "";
+let hourAsk = "";
+let valueAsk = "";
+rl.question(
+    `* ${
+        "Obligatorio".bgRed.black
+    }: Indique una fecha desde que se veran los leads \n FORMATO: AAAA-MM-DD: `,
+    (answer) => {
+        dateAsk = answer;
+        console.log("Fecha desde seleccionada: ", dateAsk);
+        rl.question(
+            `* ${
+                "Opcional".bgGreen.black
+            }: indique la hora desde el día que seleccionó, puede dejarlo en blanco con ENTER \n FORMATO: HH:MM:SS: `,
+            (answer) => {
+                hourAsk = answer;
+                console.log("Hora desde seleccionada", hourAsk);
+                rl.question(
+                    `* ${
+                        "Opcional".bgGreen.black
+                    }: Indique Value a buscar dentro del JSON, puede dejarlo en blanco con ENTER \n ejemplo, escribir: sede santiago es igual a la busqueda: value: Sede Santiago: `,
+                    (answer) => {
+                        valueAsk = answer;
+                        console.log("valor a buscar seleccionado", valueAsk);
+
+                        initProcess(dateAsk, hourAsk, valueAsk);
+                    }
+                );
+            }
+        );
+    }
+);
+
+const initProcess = async (date, hours, search) => {
+    console.log("date: " + date + "hours: " + hours + "search: " + search);
+    console.log("Iniciando proceso de busqueda...");
+    const leads = await getAllLeads(
+        date.toString(),
+        hours.toString(),
+        search.toString()
+    );
+    if (leads.length > 0) {
+        if (setLeads(leads)) {
+            process.exit();
+        }
+    }
+    console.log(
+        "Cantidad de lead insuficientes:".bgYellow.black + " " + leads.length
+    );
+
+    process.exit();
 };
