@@ -72,10 +72,10 @@ const totalProceso = (leidos, success, errors, data, response) => {
     ) {
         dataLog += "*** Error *** : \n";
         dataLog +=
-            JSON.stringify(response["validation-errors"][0].errors) +
-            "\n".bgRed;
+            JSON.stringify(response["validation-errors"][0].errors).bgRed
+                .black + "\n";
     } else {
-        dataLog += "*** Success ***\n";
+        dataLog += "*** Success ***".bgGreen.black + "\n";
     }
 
     dataLog += "***** RESULTADOS ******\n";
@@ -106,7 +106,9 @@ const fileLog = (data) => {
     fs.writeFile(fileNameLog, data, (err) => {
         if (err) throw err;
         console.log(
-            "Log Guardado en la siguiente ruta:".bgGreen.black +"\n"+ fileNameLog
+            "Log Guardado en la siguiente ruta:".bgGreen.black +
+                "\n" +
+                fileNameLog
         );
         console.log("Para salir preciona ENTER.".bgYellow.black);
     });
