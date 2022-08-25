@@ -15,9 +15,9 @@ const getAllLeads = async (date, time = "", valueJson = "") => {
     const data = await model.getLeads(date, time, valueJson);
     return data;
 };
-const setLeads = (leads) => {
+const setLeads = async (leads) => {
     try {
-        leads.forEach(async (element, index) => {
+        await leads.forEach(async (element, index) => {
             await new Promise((resolve) => setTimeout(resolve, index++ * 1000));
             setTimeout(async () => {
                 let resultInsert = await insertLead(element.json_request);
@@ -101,12 +101,14 @@ const fileLog = (data) => {
 
     today =
         yyyy + "-" + mm + "-" + dd + "-" + hours + "" + minutes + "" + seconds;
-    console.log("Guardando archivo de log...");
+    console.log("Guardando archivo de log...".bgBlue.black);
     let fileNameLog = "logs/" + today + "-log.txt";
     fs.writeFile(fileNameLog, data, (err) => {
         if (err) throw err;
-        console.log("Log Guardado nombre del archivo: \n" + fileNameLog);
-        console.log("Para salir preciona ENTER.");
+        console.log(
+            "Log Guardado en la siguiente ruta:".bgGreen.black +"\n"+ fileNameLog
+        );
+        console.log("Para salir preciona ENTER.".bgYellow.black);
     });
 };
 
@@ -127,21 +129,18 @@ rl.question(
     }: Indique una fecha desde que se veran los leads \n FORMATO: AAAA-MM-DD: `,
     (answer) => {
         dateAsk = answer;
-        console.log("Fecha desde seleccionada: ", dateAsk);
         rl.question(
             `* ${
                 "Opcional".bgGreen.black
             }: indique la hora desde el día que seleccionó, puede dejarlo en blanco con ENTER \n FORMATO: HH:MM:SS: `,
             (answer) => {
                 hourAsk = answer;
-                console.log("Hora desde seleccionada", hourAsk);
                 rl.question(
                     `* ${
                         "Opcional".bgGreen.black
                     }: Indique Value a buscar dentro del JSON, puede dejarlo en blanco con ENTER \n ejemplo, escribir: sede santiago es igual a la busqueda: value: Sede Santiago: `,
                     (answer) => {
                         valueAsk = answer;
-                        console.log("valor a buscar seleccionado", valueAsk);
 
                         initProcess(dateAsk, hourAsk, valueAsk);
                     }
@@ -152,21 +151,35 @@ rl.question(
 );
 
 const initProcess = async (date, hours, search) => {
-    console.log("date: " + date + "hours: " + hours + "search: " + search);
     console.log("Iniciando proceso de busqueda...");
     const leads = await getAllLeads(
         date.toString(),
         hours.toString(),
         search.toString()
     );
+    console.log("Cargando informacion...".bgYellow.black);
     if (leads.length > 0) {
-        if (setLeads(leads)) {
-            process.exit();
+        console.log("Leads encontrados:".bgYellow.black + " " + leads.length);
+        if (await setLeads(leads)) {
+            console.log(
+                "Preparando el procesamiento de leads, favor espere unos segundos"
+                    .bgBlue.black
+            );
+            setTimeout(() => {
+                return end();
+            }, 3000);
+            return;
         }
     }
     console.log(
         "Cantidad de lead insuficientes:".bgYellow.black + " " + leads.length
     );
 
-    process.exit();
+    end();
+};
+
+const end = () => {
+    process.stdin.on("data", async () => {
+        process.exit();
+    });
 };
