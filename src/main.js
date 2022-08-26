@@ -66,7 +66,9 @@ const totalProceso = (leidos, success, errors, data, response) => {
     dataLog += "\n";
     dataLog += "Response desde AMO CRM:" + JSON.stringify(response) + "\n";
     dataLog += "===================================\n";
-    if (
+    if (response["_total_items"]) {
+        dataLog += "*** Success ***".bgGreen.black + "\n";
+    } else if (
         response["validation-errors"] != undefined &&
         response["validation-errors"][0].errors.length > 0
     ) {
@@ -75,7 +77,8 @@ const totalProceso = (leidos, success, errors, data, response) => {
             JSON.stringify(response["validation-errors"][0].errors).bgRed
                 .black + "\n";
     } else {
-        dataLog += "*** Success ***".bgGreen.black + "\n";
+        dataLog += "*** Error *** : \n";
+        dataLog += JSON.stringify(response["detail"]).bgRed.black + "\n";
     }
 
     dataLog += "***** RESULTADOS ******\n";
