@@ -13,18 +13,16 @@ npm install
 npm run build
 ```
 
-### IMPORTANTE: para obtener un token valido de AMO CRM, debemos ir al WordPress y extraer el Access Token desde ahí en la configuración del plugin AMO Forms, si es la primera vez que usas este plugin debes realizar el siguiente comando para crear el archivo con las variables de entorno, recuerda que tambien debes desbloquear tu IP pública configurada en la seguridad de la BBDD de Azure y configurar los accesos en el .env
+### IMPORTANTE: debes tener a mano el ACCESS_TOKEN que solo dura 24 horas, por lo que debes tomarlo de la confg del plugin de AMO en Wordpress, como aparece en la imagen adjunta
 
+![img con el access token](./img/AMOForm1.png)
 
+### Debes insertar los datos de las variables de entorno para la conexión de la BBDD Wordpress, copia el example como indica el siguiente código
 ```
 cp .env.example .env
 ```
-![img con el access token](./img/AMOForm1.png)
 
-### Lo anterior es para crear las variables de entorno necesarias, dentro de esta se encuentra el ACCESS_TOKEN a configurar
-
-
-## Con el siguiente comando el proyecto se compilara y se ejecutara de forma automatica:
+## Con el siguiente comando el proyecto se ejecutara de forma automatica:
 ```
 npm run start
 ```
