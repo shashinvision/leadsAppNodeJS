@@ -2,9 +2,8 @@ import fetch from "node-fetch";
 import "dotenv/config";
 
 const urlAMO = process.env.AMO_URL;
-const accessToken = process.env.ACCESS_TOKEN;
 
-const insertLead = async (data) => {
+const insertLead = async (data, accessToken) => {
     let respuesta = "";
     await fetch(urlAMO, {
         method: "POST",

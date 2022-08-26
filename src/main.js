@@ -15,12 +15,15 @@ const getAllLeads = async (date, time = "", valueJson = "") => {
     const data = await model.getLeads(date, time, valueJson);
     return data;
 };
-const setLeads = async (leads) => {
+const setLeads = async (leads, ACCESS_TOKEN) => {
     try {
         await leads.forEach(async (element, index) => {
             await new Promise((resolve) => setTimeout(resolve, index++ * 1000));
             setTimeout(async () => {
-                let resultInsert = await insertLead(element.json_request);
+                let resultInsert = await insertLead(
+                    element.json_request,
+                    ACCESS_TOKEN
+                );
                 if (
                     resultInsert["validation-errors"] != undefined ||
                     resultInsert.status != undefined
@@ -128,34 +131,46 @@ await netInfo();
 let dateAsk = "";
 let hourAsk = "";
 let valueAsk = "";
+let ACCESS_TOKEN = "";
 rl.question(
-    `* ${
-        "Obligatorio".bgRed.black
-    }: Indique una fecha desde que se veran los leads \n FORMATO: AAAA-MM-DD: `,
+    "Favor inserte el ACCESS_TOKEN: ".bgYellow.black + "\n",
     (answer) => {
-        dateAsk = answer;
+        ACCESS_TOKEN = answer;
+
         rl.question(
             `* ${
-                "Opcional".bgGreen.black
-            }: indique la hora desde el día que seleccionó, puede dejarlo en blanco con ENTER \n FORMATO: HH:MM:SS: `,
+                "Obligatorio".bgRed.black
+            }: Indique una fecha desde que se veran los leads \n FORMATO: AAAA-MM-DD: `,
             (answer) => {
-                hourAsk = answer;
+                dateAsk = answer;
                 rl.question(
                     `* ${
                         "Opcional".bgGreen.black
-                    }: Indique Value a buscar dentro del JSON, puede dejarlo en blanco con ENTER \n ejemplo, escribir: sede santiago es igual a la busqueda: value: Sede Santiago: `,
+                    }: indique la hora desde el día que seleccionó, puede dejarlo en blanco con ENTER \n FORMATO: HH:MM:SS: `,
                     (answer) => {
-                        valueAsk = answer;
+                        hourAsk = answer;
+                        rl.question(
+                            `* ${
+                                "Opcional".bgGreen.black
+                            }: Indique Value a buscar dentro del JSON, puede dejarlo en blanco con ENTER \n ejemplo, escribir: sede santiago es igual a la busqueda: value: Sede Santiago: `,
+                            (answer) => {
+                                valueAsk = answer;
 
-                        initProcess(dateAsk, hourAsk, valueAsk);
+                                initProcess(
+                                    dateAsk,
+                                    hourAsk,
+                                    valueAsk,
+                                    ACCESS_TOKEN.trim()
+                                );
+                            }
+                        );
                     }
                 );
             }
         );
     }
 );
-
-const initProcess = async (date, hours, search) => {
+const initProcess = async (date, hours, search, ACCESS_TOKEN) => {
     console.log("Iniciando proceso de busqueda...");
     const leads = await getAllLeads(
         date.toString(),
@@ -165,7 +180,7 @@ const initProcess = async (date, hours, search) => {
     console.log("Cargando informacion...".bgYellow.black);
     if (leads.length > 0) {
         console.log("Leads encontrados:".bgYellow.black + " " + leads.length);
-        if (await setLeads(leads)) {
+        if (await setLeads(leads, ACCESS_TOKEN)) {
             console.log(
                 "Preparando el procesamiento de leads, favor espere unos segundos"
                     .bgBlue.black
